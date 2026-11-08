@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sprich! German Trainer</title>
+<style>
+:root{--bg:#131f24;--line:#37464f;--text:#f1f7fb;--mute:#8aa0ab;--blue:#69bcf3;--blue2:#4a97d3;--green:#58cc02;--gdark:#1f3d12;--red:#ff5b5b;--rdark:#3b1c1f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#131f24}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:"DIN Round","Nunito",system-ui,-apple-system,"Segoe UI",sans-serif}
+#app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;padding:14px 18px 22px}
+.top{display:flex;align-items:center;gap:14px}
+.x{background:none;border:0;color:#9aa;font-size:34px;line-height:1;cursor:pointer;padding:0 4px}
+.bar{flex:1;height:16px;border-radius:9px;background:#37464f;overflow:hidden}
+.fill{height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,#6ff2ff,#7dffcf,#4a8df7);transition:width .5s}
+.cnt{display:flex;align-items:center;gap:6px;color:var(--green);font-weight:800;font-size:18px}
+.cnt i{width:28px;height:28px;border-radius:50%;background:#94d333;color:#131f24;display:grid;place-items:center;font-style:normal;font-size:16px}
+h1{font-size:23px;margin:18px 0 0;font-weight:800}
+.round{font-size:13px;color:var(--mute);margin-top:4px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.round.rev{color:#ffc800}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+.card{width:min(78vw,320px);aspect-ratio:1/1;border:2px solid var(--line);border-radius:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;position:relative;transition:background .25s,border-color .25s,transform .25s;box-shadow:0 -14px 0 -10px var(--line)}
+.card .w{font-size:40px;font-weight:800;overflow-wrap:anywhere}
+.card .sub{margin-top:12px;font-size:16px;color:var(--mute);min-height:22px}
+.card.ok{background:var(--gdark);border-color:var(--green);animation:pop .5s}
+.card.ok .w{color:#b8f27c}
+.card.bad{background:var(--rdark);border-color:var(--red);animation:shake .4s}
+.card.reveal{border-color:#ffc800}
+.card .de{color:#ffc800;font-size:34px;font-weight:800}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.stats{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mute);margin-bottom:12px;font-weight:700}
+.stats b{color:var(--text)}
+.ctrl{display:flex;gap:14px;justify-content:center}
+.btn{border:2px solid var(--line);background:var(--bg);color:var(--blue);border-radius:20px;height:64px;font-size:26px;cursor:pointer;box-shadow:0 5px 0 var(--line);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--line)}
+.mic{flex:1;border:0;background:var(--blue);color:#0b2a3d;box-shadow:0 6px 0 var(--blue2);font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;gap:10px}
+.mic:active{box-shadow:0 1px 0 var(--blue2)}
+.mic.on{background:#ff8a8a;box-shadow:0 6px 0 #d45f5f;animation:pulse 1.1s infinite}
+@keyframes pulse{50%{filter:brightness(1.15)}}
+.dots{display:flex;gap:6px}.dots span{width:8px;height:8px;border-radius:50%;background:#0b2a3d;animation:b 1s infinite}
+.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+@keyframes b{50%{transform:translateY(-6px)}}
+.skip{width:76px}
+.typed{display:none;margin-top:10px}.typed input{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:#1b2a31;color:var(--text);font-size:16px}
+.msg{min-height:20px;text-align:center;color:var(--mute);font-size:14px;margin:10px 0 14px}
+.done{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.done .big{font-size:64px}.done h2{margin:0;font-size:28px}
+.sum{width:100%;max-width:320px;border:2px solid var(--line);border-radius:20px;padding:6px 16px;margin:12px 0}
+.sum div{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}.sum div:last-child{border:0}
+.sum b{color:var(--green)}
+:root{--bg:#1a1426;--line:#4a3d63;--text:#f6efe2;--mute:#a99bc4;--blue:#ffb347;--blue2:#d98a1f}
+h1,.card .w,.card .de,.done h2{font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif}
+h1{font-style:italic;font-weight:700}
+.card{background:#f3ead8;border:0;border-radius:34px 34px 34px 8px;color:#241a35;box-shadow:9px 9px 0 #3dd6c3}
+.card .w{color:#241a35;font-weight:700}.card .sub{color:#6b5a85}
+.card.ok{background:#c4f0d5;box-shadow:9px 9px 0 #1f9d5c}.card.ok .w{color:#14532d}
+.card.bad{background:#ffd6d6;box-shadow:9px 9px 0 #ff5b5b}
+.card.reveal{box-shadow:9px 9px 0 #ffb347}.card .de{color:#b45309}
+.mic{border-radius:34px;color:#2a1a05}.skip{border-radius:50%;width:64px}
+.card.bad .sub{font-size:28px;font-weight:700;color:#b91c1c;font-family:Georgia,serif}
+.card.bad{background:#e5484d;box-shadow:9px 9px 0 #8f1d22;animation:flip .45s}
+.card.bad .sub{color:#ffe1e1;font-size:16px;font-weight:400;font-family:inherit}
+.card.bad .de{color:#fff;font-size:40px;margin:8px 0}
+@keyframes flip{0%{transform:rotateY(90deg)}100%{transform:rotateY(0)}}
+.card.ok .de{color:#14532d;font-size:40px;margin:8px 0}
+.card.ok .sub{color:#2f6b45;font-size:16px}
+.pos{font-size:12px;letter-spacing:.12em;text-transform:uppercase;background:#241a35;color:#ffb347;padding:5px 14px;border-radius:20px;margin-bottom:16px;font-family:system-ui,sans-serif;font-weight:700}
+.round.rev{color:#3dd6c3}</style></head>
+<body><div id="app"></div>
+<script>
+/* ============ 1. VOCABULARY DATA ============ */
+const VOCAB_OLD=[
+{id:1,en:"simple",de:["einfach"]},{id:2,en:"house",de:["Haus"]},{id:3,en:"water",de:["Wasser"]},
+{id:4,en:"to learn",de:["lernen"]},{id:5,en:"beautiful",de:["schön","schon","hübsch"]},
+{id:6,en:"difficult",de:["schwierig","schwer"]},{id:7,en:"always",de:["immer"]},
+{id:8,en:"tomorrow",de:["morgen"]},{id:9,en:"book",de:["Buch"]},{id:10,en:"street",de:["Straße","Strasse"]},
+{id:11,en:"to work",de:["arbeiten"]},{id:12,en:"often",de:["oft","häufig"]},{id:13,en:"city",de:["Stadt"]},
+{id:14,en:"friend",de:["Freund","Freundin"]},{id:15,en:"thank you",de:["danke","vielen Dank"]}];
+const RAW=`to be|sein
+to have|haben
+to become|werden
+to be able to|können
+to have to|müssen
+to want|wollen
+to be allowed to|dürfen
+to be supposed to|sollen
+to like|mögen
+to make|machen
+to go|gehen
+to come|kommen
+to see|sehen
+to say|sagen
+to give|geben
+to take|nehmen
+to know a fact|wissen
+to know a person|kennen
+to think|denken
+to find|finden
+to stand|stehen
+to lie|liegen
+to sit|sitzen
+to speak|sprechen/reden
+to ask|fragen
+to answer|antworten
+to name|nennen
+to bring|bringen
+to hold|halten
+to stay|bleiben
+to leave|verlassen
+to begin|beginnen/anfangen
+to finish|beenden
+to show|zeigen
+to hear|hören
+to play|spielen
+to work|arbeiten
+to read|lesen
+to write|schreiben
+to learn|lernen
+to teach|lehren/unterrichten
+to understand|verstehen
+to live|leben/wohnen
+to eat|essen
+to drink|trinken
+to sleep|schlafen
+to run|rennen/laufen
+to drive|fahren
+to fly|fliegen
+to buy|kaufen
+to sell|verkaufen
+to pay|bezahlen/zahlen
+to cost|kosten
+to open|öffnen/aufmachen
+to close|schließen/zumachen
+to wait|warten
+to help|helfen
+to love|lieben
+to need|brauchen
+to use|benutzen/nutzen
+to try|versuchen
+to look|schauen/gucken
+to look for|suchen
+to send|schicken/senden
+to receive|bekommen/erhalten
+to meet|treffen
+to follow|folgen
+to change|ändern/wechseln
+to remember|erinnern
+to forget|vergessen
+to explain|erklären
+to decide|entscheiden
+to choose|wählen
+to win|gewinnen
+to lose|verlieren
+to cook|kochen
+to wash|waschen
+to clean|putzen/reinigen
+to build|bauen
+to break|brechen
+to cut|schneiden
+to carry|tragen
+to put on|anziehen
+to pull|ziehen
+to push|drücken/schieben
+to throw|werfen
+to catch|fangen
+to fall|fallen
+to climb|steigen
+to grow|wachsen
+to die|sterben
+to wish|wünschen
+to hope|hoffen
+to believe|glauben
+to feel|fühlen
+to smell|riechen
+to taste|schmecken
+to touch|berühren
+to laugh|lachen
+to cry|weinen
+to smile|lächeln
+to sing|singen
+to dance|tanzen
+to swim|schwimmen
+to travel|reisen
+to visit|besuchen
+to invite|einladen
+to celebrate|feiern
+to thank|danken
+to apologize|entschuldigen
+to promise|versprechen
+to allow|erlauben
+to forbid|verbieten
+to prefer|bevorzugen
+to compare|vergleichen
+to count|zählen
+to measure|messen
+to repeat|wiederholen
+to practise|üben
+to study|studieren
+to create|schaffen
+to produce|produzieren
+to develop|entwickeln
+to improve|verbessern
+to prepare|vorbereiten
+to organize|organisieren
+to plan|planen
+to arrive|ankommen
+to depart|abfahren
+to return|zurückkehren
+to enter|betreten
+to protect|schützen
+to save money|sparen
+to share|teilen
+to connect|verbinden
+to belong|gehören
+to seem|scheinen
+to happen|passieren
+to appear|erscheinen
+to disappear|verschwinden
+to continue|fortsetzen
+to stop|aufhören
+to turn|drehen
+to hurt|wehtun
+to bake|backen
+to pick up|abholen
+to mean|bedeuten
+to fit|passen
+to put|legen/stellen
+to hang|hängen
+to dream|träumen
+to describe|beschreiben
+to discuss|diskutieren
+to agree|zustimmen
+to refuse|ablehnen
+to accept|akzeptieren/annehmen
+to offer|anbieten
+to order|bestellen
+to rent|mieten
+to repair|reparieren
+to check|prüfen/kontrollieren
+time|die Zeit
+year|das Jahr
+day|der Tag
+week|die Woche
+month|der Monat
+hour|die Stunde
+morning|der Morgen
+evening|der Abend
+night|die Nacht
+man|der Mann
+woman|die Frau
+child|das Kind
+boy|der Junge
+girl|das Mädchen
+person|der Mensch/die Person
+people|die Leute
+friend|der Freund/die Freundin
+family|die Familie
+mother|die Mutter
+father|der Vater
+brother|der Bruder
+sister|die Schwester
+son|der Sohn
+daughter|die Tochter
+parents|die Eltern
+grandmother|die Oma/die Großmutter
+house|das Haus
+apartment|die Wohnung
+room|das Zimmer
+kitchen|die Küche
+door|die Tür
+window|das Fenster
+table|der Tisch
+chair|der Stuhl
+bed|das Bett
+garden|der Garten
+city|die Stadt
+village|das Dorf
+country|das Land
+street|die Straße
+school|die Schule
+university|die Universität
+work|die Arbeit
+office|das Büro
+company|die Firma
+money|das Geld
+price|der Preis
+shop|der Laden/das Geschäft
+market|der Markt
+water|das Wasser
+bread|das Brot
+milk|die Milch
+coffee|der Kaffee
+tea|der Tee
+beer|das Bier
+wine|der Wein
+meat|das Fleisch
+fish|der Fisch
+fruit|das Obst
+apple|der Apfel
+vegetables|das Gemüse
+egg|das Ei
+cheese|der Käse
+sugar|der Zucker
+salt|das Salz
+breakfast|das Frühstück
+lunch|das Mittagessen
+dinner|das Abendessen
+food|das Essen
+restaurant|das Restaurant
+car|das Auto
+bus|der Bus
+train|der Zug
+plane|das Flugzeug
+bicycle|das Fahrrad
+ticket|die Fahrkarte
+station|der Bahnhof
+airport|der Flughafen
+hotel|das Hotel
+trip|die Reise
+hand|die Hand
+head|der Kopf
+eye|das Auge
+ear|das Ohr
+mouth|der Mund
+nose|die Nase
+heart|das Herz
+foot|der Fuß
+leg|das Bein
+arm|der Arm
+body|der Körper
+doctor|der Arzt/die Ärztin
+hospital|das Krankenhaus
+health|die Gesundheit
+weather|das Wetter
+sun|die Sonne
+rain|der Regen
+snow|der Schnee
+wind|der Wind
+sea|das Meer
+mountain|der Berg
+river|der Fluss
+tree|der Baum
+flower|die Blume
+animal|das Tier
+dog|der Hund
+cat|die Katze
+bird|der Vogel
+book|das Buch
+letter|der Brief
+newspaper|die Zeitung
+phone|das Telefon
+computer|der Computer
+picture|das Bild
+music|die Musik
+film|der Film
+game|das Spiel
+language|die Sprache
+word|das Wort
+sentence|der Satz
+question|die Frage
+answer|die Antwort
+problem|das Problem
+idea|die Idee
+reason|der Grund
+example|das Beispiel
+story|die Geschichte
+life|das Leben
+world|die Welt
+thing|das Ding/die Sache
+part|der Teil
+way|der Weg
+place|der Ort/der Platz
+name|der Name
+number|die Zahl/die Nummer
+love|die Liebe
+war|der Krieg
+government|die Regierung
+law|das Gesetz
+freedom|die Freiheit
+fear|die Angst
+luck|das Glück
+dream|der Traum
+gift|das Geschenk
+party|das Fest/die Party
+holiday|der Urlaub
+clothes|die Kleidung
+shoe|der Schuh
+bag|die Tasche
+key|der Schlüssel
+light|das Licht
+colour|die Farbe
+end|das Ende
+beginning|der Anfang
+meeting|das Treffen
+result|das Ergebnis
+information|die Information
+experience|die Erfahrung
+birthday|der Geburtstag
+good|gut
+bad|schlecht
+big|groß
+small|klein
+long|lang
+short|kurz
+old|alt
+young|jung
+new|neu
+high|hoch
+low|niedrig
+fast|schnell
+slow|langsam
+easy|leicht
+simple|einfach
+difficult|schwierig
+heavy|schwer
+beautiful|schön/hübsch
+ugly|hässlich
+hot|heiß
+cold|kalt
+warm|warm
+cool|kühl
+hungry|hungrig
+thirsty|durstig
+tired|müde
+awake|wach
+healthy|gesund
+sick|krank
+happy|glücklich
+sad|traurig
+angry|wütend/böse
+afraid|ängstlich
+nice|nett
+kind|freundlich
+polite|höflich
+rude|unhöflich
+funny|lustig
+serious|ernst
+strong|stark
+weak|schwach
+rich|reich
+poor|arm
+expensive|teuer
+cheap|billig/günstig
+free|frei
+busy|beschäftigt
+empty|leer
+full|voll
+open|offen
+closed|geschlossen
+clean|sauber
+dirty|schmutzig
+bright|hell
+dark|dunkel
+loud|laut
+quiet|leise
+soft|weich
+hard|hart
+sweet|süß
+sour|sauer
+salty|salzig
+fresh|frisch
+raw|roh
+wet|nass
+dry|trocken
+wide|breit
+narrow|eng
+thick|dick
+thin|dünn
+deep|tief
+flat|flach
+round|rund
+straight|gerade
+correct|richtig
+wrong|falsch
+true|wahr
+possible|möglich
+impossible|unmöglich
+important|wichtig
+necessary|nötig/notwendig
+interesting|interessant
+boring|langweilig
+special|besonders
+normal|normal
+strange|seltsam/komisch
+famous|berühmt
+known|bekannt
+unknown|unbekannt
+whole|ganz
+same|gleich
+different|anders/verschieden
+similar|ähnlich
+own|eigen
+only|einzig
+last|letzte
+first|erste
+next|nächste
+early|früh
+late|spät
+ready|bereit/fertig
+sure|sicher
+dangerous|gefährlich
+careful|vorsichtig
+alone|allein
+lonely|einsam
+German|deutsch
+English|englisch
+foreign|fremd/ausländisch
+public|öffentlich
+private|privat
+modern|modern
+real|echt/wirklich
+clever|klug/schlau
+stupid|dumm
+brave|mutig
+shy|schüchtern
+curious|neugierig
+patient|geduldig
+honest|ehrlich
+lazy|faul
+hard-working|fleißig
+generous|großzügig
+proud|stolz
+jealous|eifersüchtig
+surprised|überrascht
+worried|besorgt
+calm|ruhig
+nervous|nervös
+excited|aufgeregt
+pleased|zufrieden
+grateful|dankbar
+married|verheiratet
+single|ledig
+colourful|bunt
+red|rot
+blue|blau
+green|grün
+yellow|gelb
+black|schwarz
+white|weiß
+brown|braun
+grey|grau
+pink|rosa
+available|verfügbar
+common|häufig/üblich
+rare|selten
+personal|persönlich
+political|politisch
+natural|natürlich
+technical|technisch
+digital|digital
+international|international
+~always|immer
+~never|nie
+~often|oft
+~sometimes|manchmal
+~usually|meistens/normalerweise
+~already|schon
+~still|noch
+~again|wieder
+~now|jetzt
+~then|dann
+~today|heute
+~tomorrow|morgen
+~yesterday|gestern
+~soon|bald
+~later|später
+~here|hier
+~there|dort/da
+~everywhere|überall
+~somewhere|irgendwo
+~where|wo
+~very|sehr
+~too much|zu
+~quite|ziemlich
+~almost|fast
+~only|nur
+~also|auch
+~even|sogar
+~just now|gerade
+~maybe|vielleicht
+~probably|wahrscheinlich
+~together|zusammen
+~far|weit
+~near|nah
+~above|oben
+~below|unten
+~inside|drinnen
+~outside|draußen
+~left|links
+~right|rechts
+~straight ahead|geradeaus
+~back|zurück
+~much|viel
+~little|wenig
+~more|mehr
+~less|weniger
+~enough|genug
+~suddenly|plötzlich
+~immediately|sofort
+~finally|endlich
+~at first|zuerst
+~actually|eigentlich
+~exactly|genau
+~unfortunately|leider
+~gladly|gern
+~why|warum
+~how|wie
+~when|wann
+~away|weg
+~therefore|deshalb
+~otherwise|sonst
+~anyway|trotzdem`;
+const VOCAB=RAW.split("\n").map((l,i)=>{const[e0,d]=l.split("|");let e=e0.trim(),pos;const de=d.split("/").map(s=>s.trim());if(e[0]==="~"){e=e.slice(1);pos="adverb"}else if(/^to /.test(e))pos="verb";else if(/^(der|die|das)\s/i.test(de[0]))pos="noun";else pos="adjective";return{id:i+1,en:e,de,pos}});
+const byId=id=>VOCAB.find(w=>w.id===id);
+
+/* ============ 2. SPEECH (STT + TTS) ============ */
+const Speech={
+  SR:window.SpeechRecognition||window.webkitSpeechRecognition,
+  supported(){return !!this.SR},
+  rec:null,
+  listen(onInterim){
+    return new Promise(res=>{
+      const r=new this.SR();this.rec=r;r.lang="de-DE";r.interimResults=true;r.maxAlternatives=5;r.continuous=false;
+      let out=null,err=null,started=false;
+      r.onresult=e=>{const rs=e.results[e.results.length-1];
+        const alts=[...rs].map(a=>({t:a.transcript.trim(),c:a.confidence||0}));
+        if(rs.isFinal)out=alts;else onInterim&&onInterim(alts[0].t)};
+      r.onerror=e=>{err=e.error};r.onstart=()=>{started=true};
+      r.onend=()=>{this.rec=null;res({alts:out||[],error:err})};
+      try{r.start()}catch(e){res({alts:[],error:"start-failed"})}
+      setTimeout(()=>{if(!started){try{r.abort()}catch(e){}res({alts:[],error:"no-start"})}},6000);
+    });
+  },
+  stop(){try{this.rec&&this.rec.stop()}catch(e){}},
+  speak(text){
+    try{const u=new SpeechSynthesisUtterance(text);u.lang="de-DE";u.rate=.85;
+      const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("de"));if(v)u.voice=v;
+      speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}
+  }
+};
+
+/* ============ 3. ANSWER EVALUATION (local fuzzy + AI) ============ */
+const Evaluator={
+  ai:null,
+  async init(){try{this.ai=await claude.use("sample")}catch(e){this.ai=null}},
+  norm(s){return s.toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss")
+    .replace(/[^a-z\s]/g,"").replace(/\b(der|die|das|ein|eine|den|dem)\b/g,"").replace(/\s+/g," ").trim()},
+  lev(a,b){const m=[...Array(a.length+1)].map((_,i)=>[i]);for(let j=1;j<=b.length;j++)m[0][j]=j;
+    for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)
+      m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length]},
+  sim(a,b){if(!a||!b)return 0;return 1-this.lev(a,b)/Math.max(a.length,b.length)},
+  local(alts,word){
+    let best=0;
+    for(const a of alts){const h=this.norm(a.t);const parts=[h,...h.split(" ")];
+      for(const t of word.de){const n=this.norm(t);for(const p of parts)best=Math.max(best,this.sim(p,n))}}
+    return best;
+  },
+  artCheck(alts,word){
+    if(!word.de.some(d=>/^(der|die|das)\s/i.test(d)))return null;
+    const tk=s=>s.toLowerCase().replace(/[^a-zäöüß\s]/g,"").trim().split(/\s+/);
+    let nounOk=false;
+    for(const a of alts){const t=tk(a.t),hasA=["der","die","das"].includes(t[0]),ha=hasA?t[0]:null,hn=this.norm((hasA?t.slice(1):t).join(" "));
+      for(const d of word.de){const e=tk(d),ea=e[0],en=this.norm(e.slice(1).join(" "));
+        if(this.sim(hn,en)>=0.8){nounOk=true;if(ha===ea)return "correct"}}}
+    return nounOk?"incorrect":null;
+  },
+  /* returns "correct" | "incorrect" | "unclear" */
+  async evaluate(alts,word){
+    if(!alts.length||!alts[0].t)return "unclear";
+    {const ac=this.artCheck(alts,word);if(ac)return ac}
+    const s=this.local(alts,word);
+    if(s>=0.8)return "correct";
+    if(this.ai){
+      try{
+        const r=await Promise.race([this.ai.json(
+`You grade spoken German vocabulary. Speech recognition (de-DE) heard these candidates from a learner with a non-native accent: ${JSON.stringify(alts.map(a=>a.t))}.
+English prompt: "${word.en}". Accepted German: ${JSON.stringify(word.de)}.
+For nouns the accepted answers include the article (der/die/das): a missing or wrong article makes the answer incorrect. Accept if any candidate is a correct German translation of the prompt (including valid synonyms, missing/added article, or a clear speech-recognition mishearing of an accepted word). Reject if it is a different word. Use "unclear" only if the candidates look like noise or are too garbled to judge.
+Reply with JSON only: {"verdict":"correct"|"incorrect"|"unclear"}`),
+          new Promise((_,j)=>setTimeout(()=>j("timeout"),9000))]);
+        if(r&&["correct","incorrect","unclear"].includes(r.verdict))return r.verdict;
+      }catch(e){}
+    }
+    if(s>=0.65)return "unclear";
+    return "incorrect";
+  }
+};
+
+/* ============ 4. SESSION MANAGEMENT ============ */
+const Session={
+  KEY:"dvt-session-v3",S:null,
+  order(){let a=VOCAB.map(w=>w.id),s=20261108;const r=()=>{s=(s+0x6D2B79F5)|0;let t=Math.imul(s^(s>>>15),1|s);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296};for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a},
+  batch(){let p=0;try{p=+localStorage.getItem("dvt-ptr")||0}catch(e){}const o=this.order(),out=[];for(let i=0;i<50;i++)out.push(o[(p*50+i)%o.length]);return out},
+  fresh(){const q=this.batch().sort(()=>Math.random()-.5);
+    return{round:1,day:new Date().toDateString(),total:q.length,queue:q,rev:[],first:{},mastered:[],reveal:false,done:false}},
+  load(){try{const s=JSON.parse(localStorage.getItem(this.KEY));if(s&&s.queue&&!(s.done&&s.day!==new Date().toDateString()))return s}catch(e){}return this.fresh()},
+  save(){try{if(this.S.done&&!this.S.counted){this.S.counted=true;localStorage.setItem("dvt-ptr",String((+localStorage.getItem("dvt-ptr")||0)+1))}localStorage.setItem(this.KEY,JSON.stringify(this.S))}catch(e){}},
+  init(){this.S=this.load()},
+  reset(){this.S=this.fresh();this.save()},
+  get cur(){return this.S.queue[0]},
+  correct(){const s=this.S,id=s.queue.shift();
+    if(s.round===1)s.first[id]=true;
+    if(!s.mastered.includes(id))s.mastered.push(id);
+    s.reveal=false;this.advance()},
+  wrong(){const s=this.S,id=s.queue.shift();
+    if(s.round===1){s.first[id]=false;s.rev.push(id);this.advance()}
+    else{s.queue.push(id)}  /* show answer now, keep it in the queue */
+    this.save()},
+  finishReveal(){const s=this.S,id=s.queue.shift();s.queue.push(id);s.reveal=false;this.advance()},
+  advance(){const s=this.S;
+    if(s.round===1&&!s.queue.length){if(s.rev.length){s.round=2;s.queue=s.rev.slice();s.rev=[]}else s.done=true}
+    else if(s.round===2&&!s.queue.length)s.done=true;
+    this.save()},
+  stats(){const s=this.S,t=s.total||VOCAB.length,m=s.mastered.length,needRev=Object.values(s.first).filter(v=>!v).length;
+    return{total:t,mastered:m,remaining:t-m,wrong:Object.entries(s.first).filter(([id,v])=>!v&&!s.mastered.includes(+id)).length,needRev}}
+};
+
+/* ============ 5. UI ============ */
+const $=s=>document.querySelector(s);
+let forceType=false,busy=false,listening=false,unclear=0,msg="",sub="",cardCls="";
+const app=$("#app");
+
+function render(){
+  const S=Session.S,st=Session.stats();
+  if(S.done){
+    app.innerHTML=`<div class="done"><div class="big">🎉</div><h2>Today's 50 mastered!</h2><div class="round">Come back tomorrow for your next 50</div>
+    <div class="sum"><div>Total words practised<b>${st.total}</b></div>
+    <div>Correct on first try<b>${st.total-st.needRev}</b></div>
+    <div>Needed revision<b>${st.needRev}</b></div>
+    <div>Mastered now<b>${st.mastered} / ${st.total}</b></div></div>
+    <button class="btn mic" style="flex:none;width:260px" id="again">Practise 50 more now</button></div>`;
+    $("#again").onclick=()=>{Session.reset();msg="";render()};return;
+  }
+  const w=byId(Session.cur),rev=S.round===2;
+  const pct=st.mastered/st.total*100;
+  const body=S.reveal?`<div class="sub">${w.en}</div><div class="de">${w.de[0]}</div><div class="sub">🔊 Say it out loud</div>`
+    :cardCls==="bad"||cardCls==="ok"?`<div class="sub">${w.en}</div><div class="de">${w.de[0]}</div><div class="sub">🔊</div>`:`<div class="pos">${w.pos}</div><div class="w">${w.en}</div><div class="sub">${sub}</div>`;
+  app.innerHTML=`
+  <div class="top"><button class="x" id="x" aria-label="Exit">✕</button><div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+  <div class="cnt"><i>✓</i>${st.mastered}</div></div>
+  <h1>${rev?"Second look":"Say it in German"}</h1>
+  <div class="round ${rev?"rev":""}">${rev?"Round 2 · Revision":"Round 1 · Learning"}</div>
+  <div class="stage"><div class="card ${cardCls} ${S.reveal?"reveal":""}" id="card">${body}</div></div>
+  <div class="msg" id="msg">${msg}</div>
+  <div class="stats"><span>Total <b>${st.total}</b></span><span>Correct <b>${st.mastered}</b></span><span>Incorrect <b>${st.wrong}</b></span><span>Left <b>${st.remaining}</b></span></div>
+  <div class="ctrl"><button class="btn mic ${listening?"on":""}" id="mic">${listening?'<span class="dots"><span></span><span></span><span></span></span> Listening':"🎤 Speak German"}</button>
+  <button class="btn skip" id="skip" aria-label="Skip">⏭</button></div>
+  <div class="typed" id="typed"><input id="ti" placeholder="Or type the German word" lang="de" enterkeyhint="send" autocomplete="off"></div>`;
+  $("#mic").onclick=onMic;$("#skip").onclick=onSkip;
+  $("#x").onclick=()=>{if(confirm("Exit and restart the session?")){Session.reset();msg="";cardCls="";sub="";render()}};
+  if(true){$("#typed").style.display="block";
+    $("#ti").onkeydown=e=>{if(e.key==="Enter"&&e.target.value.trim())handle([{t:e.target.value.trim(),c:1}])};
+    }
+  if(S.reveal)Speech.speak(w.de[0]);
+  
+}
+
+async function onMic(){
+  if(busy)return;
+  
+  if(listening){Speech.stop();return}
+  if(!Speech.supported()){msg="Speech recognition isn't supported in this browser. Try Chrome or Safari.";return render()}
+  try{const ms=await navigator.mediaDevices.getUserMedia({audio:true});ms.getTracks().forEach(t=>t.stop())}catch(e){msg="Mic request failed ("+(e&&e.name||e)+"). The page may be blocked from the mic by the site hosting it.";return render()}
+  listening=true;sub="";msg="Say the German word…";render();
+  const r=await Speech.listen(t=>{const el=$(".card .sub");if(el)el.textContent="“"+t+"”"});
+  listening=false;
+  if(r.error==="not-allowed"||r.error==="service-not-allowed"){msg="Microphone blocked. Allow mic access for this page (try opening it in its own tab), then tap again.";return render()}
+  if(r.error==="no-start"||r.error==="start-failed"){forceType=true;msg="The microphone didn't start ("+r.error+"). Open this page in its own browser tab (Chrome/Safari) and allow the mic. You can type meanwhile.";return render()}
+  if(r.error==="network"){msg="Speech service unreachable. Check your connection and try again.";return render()}
+  if(r.error&&r.error!=="no-speech"&&r.error!=="aborted"){msg="Speech error: "+r.error+". Tap the mic to retry.";return render()}
+  handle(r.alts);
+}
+
+async function handle(alts){
+  busy=true;const w=byId(Session.cur),S=Session.S;
+  sub=alts[0]?"“"+alts[0].t+"”":"";msg="Checking…";render();
+  const verdict=await Evaluator.evaluate(alts,w);
+  if(verdict==="unclear"&&unclear<2){unclear++;busy=false;msg="I couldn't quite catch that — tap the mic and say it again.";return render()}
+  unclear=0;
+  const ok=verdict==="correct";
+  if(S.reveal){ /* repeat-after-me step */
+    cardCls="ok";msg=ok?"Nice! Well repeated.":"Keep practising — it will come back.";render();
+    setTimeout(()=>{cardCls="";sub="";msg="";Session.finishReveal();busy=false;render()},1300);return;
+  }
+  if(ok){cardCls="ok";msg="Richtig! ✓";sub="";Speech.speak(w.de[0]);render();
+    setTimeout(()=>{cardCls="";sub="";msg="";Session.correct();busy=false;render()},1700);}
+  else{cardCls="bad";sub="→ "+w.de[0];Speech.speak(w.de[0]);msg=Session.S.round===1?"Not quite — we'll revisit this one.":"Not yet — here's the answer.";render();
+    setTimeout(()=>{cardCls="";sub="";msg="";Session.wrong();busy=false;render()},3000);}
+}
+
+function onSkip(){
+  if(busy||listening)return;busy=true;const S=Session.S;
+  if(S.reveal){Session.finishReveal()}else{Session.wrong()}
+  unclear=0;sub="";msg="";cardCls="";busy=false;render();
+}
+
+(async()=>{Session.init();render();await Evaluator.init();
+  try{speechSynthesis.getVoices()}catch(e){}})();
+</script></body></html>
